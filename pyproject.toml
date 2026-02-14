@@ -1,0 +1,11 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wav_editor-lite"
+version = "0.1.0"
+description = "Importable .wav file editor"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = ["pydub"]
