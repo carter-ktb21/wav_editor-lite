@@ -1,3 +1,18 @@
-[build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
+[project]
+name = "wav_editor_lite"
+version = "0.1.0"
+description = "A lightweight Python WAV editor via json data"
+authors = [{name = "Carco"}]
+license = {file = "LICENSE.txt"}
+readme = "README.md"
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Topic :: Games/Entertainment",
+]
+requires-python = "3.12"
+dependencies = [
+    "pydub>=0.25.1",
+    "numpy>=1.25.2",
+    "imageio-ffmpeg>=0.4.10"
+]
