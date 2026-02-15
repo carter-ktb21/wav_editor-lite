@@ -5,7 +5,6 @@ setup(
     version="0.1.0",
     packages=find_packages(),
     python_requires=">=3.12",
-    packages=['wav_editor_lite'],
     license='MIT',
     install_requires=[
         "pydub>=0.25.1",
