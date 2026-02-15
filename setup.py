@@ -1,10 +1,10 @@
 from setuptools import setup
 
 setup(
-    name="wav_editor-lite",
+    name="wav_editor_lite",
     version="0.1.0",
     python_requires=">=3.12",
-    packages=['wav_editor-lite'],
+    packages=['wav_editor_lite'],
     license='MIT',
     install_requires=[
         "pydub>=0.25.1",
