@@ -7,7 +7,7 @@ setup(
     packages=['wav_editor-lite'],
     license='MIT',
     install_requires=[
-        "pydub>=0.27.1",
+        "pydub>=0.25.1",
         "numpy>=1.25.2",
         "imageio-ffmpeg>=0.4.10"
     ],
