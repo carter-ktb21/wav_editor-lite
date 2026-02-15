@@ -2,7 +2,7 @@ from track_sync import sync
 from arrange_clips import arrange_clips
 from json_processor import process_json_folder
 from pathlib import Path
-from pydub import AudioSegment, effects
+from pydub import AudioSegment
 import imageio_ffmpeg as ffmpeg
 
 json_list = process_json_folder(Path("C:/Users/Carter/Git_Repos/wav_editor-lite/wav_editor-lite/json_data_test"))

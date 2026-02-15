@@ -1,5 +1,5 @@
 /wav_editor-lite/json_data_test/*
-/wav_editor-lite/main_test.py
+main_test.py
 venv/
 *.pyc
 __pycache__/

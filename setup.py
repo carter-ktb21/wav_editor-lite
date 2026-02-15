@@ -1,8 +1,9 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name="wav_editor_lite",
     version="0.1.0",
+    packages=find_packages(),
     python_requires=">=3.12",
     packages=['wav_editor_lite'],
     license='MIT',
