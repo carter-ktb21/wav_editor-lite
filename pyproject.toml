@@ -3,8 +3,8 @@ name = "wav_editor_lite"
 version = "0.1.0"
 description = "A lightweight Python WAV editor via json data"
 authors = [{name = "Carco"}]
-license = {file = "LICENSE.txt"}
-readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE.txt"]
 classifiers = [
   "Programming Language :: Python :: 3",
   "License :: OSI Approved :: MIT License",
