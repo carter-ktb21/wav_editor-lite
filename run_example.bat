@@ -10,6 +10,6 @@ if not exist "venv\Scripts\python.exe" (
 
 call venv\Scripts\activate.bat
 
-python wav_editor-lite\main_test.py
+python wav_editor-lite\test.py
 
 pause

@@ -7,7 +7,7 @@ def process_json_folder(folder_path: str):
     folder = Path(folder_path)
 
     if not folder.exists() or not folder.is_dir():
-        raise ValueError(f"{folder_path} is not a valid folder with ")
+        raise ValueError(f"{folder_path} is not a valid folder")
     
     for json_file in folder.glob("*.json"):
         with open(json_file, "r", encoding="utf-8") as f:
