@@ -10,6 +10,9 @@ def arrange_clips(track: AudioSegment, data, ext_wav_folder: Path="") -> AudioSe
             match clip_json.get("type", "").lower():
                 case "trim":
                     new_track = new_track[clip_json["clip_start_pos"]:clip_json["clip_end_pos"]]
+
+                    if clip_json.get("fade_in", 0) > 0:
+                        new_track = new_track.fade_in(clip_json["fade_in"])
                 
                 case "cut":
                     pre_cut_segment = new_track[:clip_json["clip_start_pos"]]
@@ -24,6 +27,21 @@ def arrange_clips(track: AudioSegment, data, ext_wav_folder: Path="") -> AudioSe
                         post_cut_segment = post_cut_segment.fade_in(clip_json["fade_in_post_clip"])
 
                     new_track = pre_cut_segment + silence + post_cut_segment
+
+                case "move":
+                    clip = new_track[clip_json["clip_start_pos"]:clip_json["clip_end_pos"]]
+
+                    if clip_json.get("fade_in", 0) > 0:
+                        clip = clip.fade_in(clip_json["fade_in"])
+
+                    if clip_json.get("clip_placement_pos", 0) > 0:
+                        pre_clip_segment = new_track[:clip_json["main_track_end_pos"]]
+                        if clip_json.get("pre_clip_fade_out", 0) > 0:
+                            pre_clip_segment = pre_clip_segment.fade_out(clip_json["pre_clip_fade_out"])
+                            pre_clip_segment = pre_clip_segment + AudioSegment.silent()
+                        new_track = pre_clip_segment.overlay(clip, clip_json["clip_placement_pos"]) + new_track[clip_json["clip_placement_pos"] + len(clip):]
+                    else:
+                        new_track = clip + new_track
 
                 # todo - finish overlay
                 case "overlay":
@@ -40,8 +58,20 @@ def arrange_clips(track: AudioSegment, data, ext_wav_folder: Path="") -> AudioSe
                             clip = new_track[clip_json["clip_start_pos"]:clip_json["clip_end_pos"]]
                             if clip_json.get("fade_out_pre_clip", 0) > 0:
                                 new_track = new_track.fade_out(clip_json["fade_out_pre_clip"])
+                            if clip_json.get("clip_fade_in", 0) > 0:
+                                clip = clip.fade_in(clip_json["clip_fade_in"])
                             new_track = new_track.overlay(clip, clip_json["overlay_start_pos"])
-                            # new_track = new_track[:len()]
+                        case "insert_and_cut":
+                            clip = new_track[clip_json["clip_start_pos"]:clip_json["clip_end_pos"]]
+                            clip = clip.fade_in(clip_json["fade_in"])
+                            pre_clip_segment = new_track[:clip_json["working_track_new_end"]]
+                            pre_clip_segment = pre_clip_segment.fade_out(clip_json["fade_out"])
+                            overlap_len = clip_json["working_track_new_end"] - clip_json["clip_placement_pos"]
+                            silence_duration = len(clip) - overlap_len
+                            pre_clip_segment = pre_clip_segment + AudioSegment.silent(duration=silence_duration)
+                            pre_clip_segment = pre_clip_segment.overlay(clip, clip_json["clip_placement_pos"])
+                            new_track = pre_clip_segment
+
     return new_track
 
 def handle_external_clip(track: AudioSegment, data, ext_wav_folder: Path="") -> AudioSegment:
