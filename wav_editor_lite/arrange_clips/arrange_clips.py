@@ -63,7 +63,8 @@ def arrange_clips(track: AudioSegment, data, ext_wav_folder: Path="") -> AudioSe
                             new_track = new_track.overlay(clip, clip_json["overlay_start_pos"])
                         case "insert_and_cut":
                             clip = new_track[clip_json["clip_start_pos"]:clip_json["clip_end_pos"]]
-                            clip = clip.fade_in(clip_json["fade_in"])
+                            if clip_json.get("fade_in"):
+                                clip = clip.fade_in(clip_json["fade_in"])
                             pre_clip_segment = new_track[:clip_json["working_track_new_end"]]
                             pre_clip_segment = pre_clip_segment.fade_out(clip_json["fade_out"])
                             overlap_len = clip_json["working_track_new_end"] - clip_json["clip_placement_pos"]
