@@ -43,7 +43,6 @@ def arrange_clips(track: AudioSegment, data, ext_wav_folder: Path="") -> AudioSe
                     else:
                         new_track = clip + new_track
 
-                # todo - finish overlay
                 case "overlay":
                     match clip_json.get("overlay_type", ""):
                         case "repeat":
@@ -54,13 +53,22 @@ def arrange_clips(track: AudioSegment, data, ext_wav_folder: Path="") -> AudioSe
                             if clip_json.get("fade_in_post_clip", 0) > 0:
                                 clip = clip.fade_in(clip_json["fade_in_post_clip"])
                             new_track = pre_clip_segment.overlay(clip, clip_json["overlay_start_pos"])
+
                         case "loop_setup":
                             clip = new_track[clip_json["clip_start_pos"]:clip_json["clip_end_pos"]]
+
+                            # handle the overlay clip going past working track end
+                            overlay_clip_duration = clip_json["clip_end_pos"] - clip_json["clip_start_pos"]
+                            extend_duration = (clip_json["overlay_start_pos"] + overlay_clip_duration) - len(new_track)
+                            if extend_duration > 0:
+                                new_track = new_track + AudioSegment.silent(duration=extend_duration)
+
                             if clip_json.get("fade_out_pre_clip", 0) > 0:
                                 new_track = new_track.fade_out(clip_json["fade_out_pre_clip"])
                             if clip_json.get("clip_fade_in", 0) > 0:
                                 clip = clip.fade_in(clip_json["clip_fade_in"])
                             new_track = new_track.overlay(clip, clip_json["overlay_start_pos"])
+
                         case "insert_and_cut":
                             clip = new_track[clip_json["clip_start_pos"]:clip_json["clip_end_pos"]]
                             if clip_json.get("fade_in"):
@@ -82,9 +90,19 @@ def handle_external_clip(track: AudioSegment, data, ext_wav_folder: Path="") -> 
 
     # i.e. if clip is not inserted at the beginning
     if data["start_pos_in_track"] > 0:
-        # todo
-        return new_track
+        if data.get("main_track_new_end_pos"):
+            pre_ext_clip = new_track[:data["main_track_new_end_pos"]]
+            after_ext_clip = new_track[data["main_track_new_end_pos"]:]
+        if data.get("main_track_fade_out"):
+            pre_ext_clip = pre_ext_clip.fade_out(data["main_track_fade_out"])
+        if data.get("ext_clip_fade_in"):
+            ext_clip = ext_clip.fade_in(data["ext_clip_fade_in"])
+        silence_duration = data["ext_clip_end_pos"] - data["ext_clip_start_pos"] - (data["main_track_new_end_pos"] - data["ext_clip_start_pos"])
+        pre_ext_clip = pre_ext_clip + AudioSegment.silent(duration=silence_duration)
+        new_track = pre_ext_clip.overlay(ext_clip, data["start_pos_in_track"]) + after_ext_clip
     else:
+        if data.get("main_track_amplify"):
+            new_track = new_track + data["main_track_amplify"]
         if data.get("main_track_fade_in"):
             new_track = new_track.fade_in(data["main_track_fade_in"])
         if data.get("ext_clip_fade_out"):
